@@ -16,28 +16,44 @@ export default function Publicacoes() {
     }
   }, [type]);
 
-  const typeButtons = Object.entries(publicationTypes).map(([key, value]) => ({
-    id: value,
-    name: publicationNames[value],
-    path: `/arquivo/publicacoes/${value}`
-  }));
-
-  // Função para pegar o ícone do tipo de publicação
-  const getPublicationIcon = (type) => {
-    switch(type) {
-      case 'decreto': return '📜';
-      case 'ato': return '👑';
-      case 'ordem': return '⚡';
-      case 'portaria': return '📋';
-      case 'medida': return '⚠️';
-      case 'tratado': return '🤝';
-      default: return '📄';
-    }
+  // Mapeamento direto dos tipos para nomes (fallback)
+  const getTypeName = (typeId) => {
+    const names = {
+      'decreto': 'Decreto Grão-Ducal',
+      'ato': 'Ato da Coroa',
+      'ordem': 'Ordem Executiva',
+      'portaria': 'Portaria',
+      'medida': 'Medida Provisória',
+      'tratado': 'Tratado'
+    };
+    return names[typeId] || 'Publicação';
   };
+
+  // Mapeamento de ícones
+  const getTypeIcon = (typeId) => {
+    const icons = {
+      'decreto': '📜',
+      'ato': '👑',
+      'ordem': '⚡',
+      'portaria': '📋',
+      'medida': '⚠️',
+      'tratado': '🤝'
+    };
+    return icons[typeId] || '📄';
+  };
+
+  const typeButtons = [
+    { id: 'decreto', name: 'Decreto Grão-Ducal', path: '/arquivo/publicacoes/decreto' },
+    { id: 'ato', name: 'Ato da Coroa', path: '/arquivo/publicacoes/ato' },
+    { id: 'ordem', name: 'Ordem Executiva', path: '/arquivo/publicacoes/ordem' },
+    { id: 'portaria', name: 'Portaria', path: '/arquivo/publicacoes/portaria' },
+    { id: 'medida', name: 'Medida Provisória', path: '/arquivo/publicacoes/medida' },
+    { id: 'tratado', name: 'Tratado', path: '/arquivo/publicacoes/tratado' }
+  ];
 
   return (
     <PageTemplate 
-      title={`Publicações - ${publicationNames[currentType]}`}
+      title={`Publicações - ${getTypeName(currentType)}`}
       content={[]}
     >
       <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "0 20px" }}>
@@ -70,7 +86,7 @@ export default function Publicacoes() {
 
         {publications.length === 0 ? (
           <p style={{ textAlign: "center", padding: "40px" }}>
-            Nenhuma publicação encontrada.
+            Nenhuma publicação encontrada para {getTypeName(currentType)}.
           </p>
         ) : (
           publications.map(pub => (
@@ -80,14 +96,13 @@ export default function Publicacoes() {
               padding: "20px",
               marginBottom: "20px",
               boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-              borderLeft: "4px solid #a58a50",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease"
+              borderLeft: "4px solid #a58a50"
             }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px", alignItems: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <span style={{ fontSize: "20px" }}>{getPublicationIcon(currentType)}</span>
+                  <span style={{ fontSize: "20px" }}>{getTypeIcon(currentType)}</span>
                   <span style={{ fontSize: "12px", color: "#a58a50", fontWeight: "600", textTransform: "uppercase" }}>
-                    {publicationNames[currentType]}
+                    {getTypeName(currentType)}
                   </span>
                 </div>
                 <span style={{ fontSize: "12px", color: "#04300a", background: "#f5ecda", padding: "4px 8px", borderRadius: "4px" }}>
@@ -95,7 +110,6 @@ export default function Publicacoes() {
                 </span>
               </div>
               
-              {/* IMAGEM DA PUBLICAÇÃO */}
               {pub.image && pub.image !== "" && (
                 <div style={{ marginBottom: "15px" }}>
                   <img 
@@ -132,8 +146,7 @@ export default function Publicacoes() {
                   fontWeight: "500",
                   display: "inline-flex",
                   alignItems: "center",
-                  gap: "5px",
-                  transition: "all 0.3s ease"
+                  gap: "5px"
                 }}
               >
                 Ler documento completo →
